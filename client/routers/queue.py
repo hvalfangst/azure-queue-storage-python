@@ -1,44 +1,39 @@
 from typing import List
 from fastapi import APIRouter, HTTPException
+from client.services.database import create_message, get_message, get_all_messages, delete_message
 
 router = APIRouter()
-
-# In-memory storage using dictionary
-messages_db = {}
 
 
 # POST: Create a new message
 @router.post("/message/", response_model=dict)
-async def create_message(message: dict):
-    # Generate a new message ID based on the size of our dictionary data structure
-    message_id = str(len(messages_db) + 1)
-    message["message_id"] = message_id  # Add the message_id to the message data
-    messages_db[message_id] = message  # Store the message in the in-memory dictionary
-    return {"message": "Message created successfully", "data": message}
+async def create_message_endpoint(message: dict):
+    # Call the create_message function from the database service
+    created_message = create_message(message)
+    return {"message": "Message created successfully", "data": created_message}
 
 
 # GET: Retrieve a message by ID
 @router.get("/message/{message_id}", response_model=dict)
 async def read_message(message_id: str):
-    # Check if the message exists in memory
-    if message_id not in messages_db:
+    # Call the get_message function from the database service
+    message = get_message(message_id)
+    if not message:
         raise HTTPException(status_code=404, detail="Message not found")
-    return messages_db[message_id]
+    return message
 
 
 # GET: Retrieve all messages
 @router.get("/message/", response_model=List[dict])
 async def read_messages():
-    # Return all messages stored in memory
-    return list(messages_db.values())
+    # Call the get_all_messages function from the database service
+    return get_all_messages()
 
 
 # DELETE: Delete a message by ID
 @router.delete("/message/{message_id}", response_model=dict)
-async def delete_message(message_id: str):
-    # Check if the message exists in memory
-    if message_id not in messages_db:
+async def delete_message_endpoint(message_id: str):
+    # Call the delete_message function from the database service
+    if not delete_message(message_id):
         raise HTTPException(status_code=404, detail="Message not found")
-    # Delete the message from memory
-    del messages_db[message_id]
     return {"message": f"Message with ID {message_id} deleted successfully"}
