@@ -20,4 +20,10 @@ The below screen-dump illustrates the expected structure of aforementioned **con
 
 ![screenshot](images/config_env.png)
 
+## Running program
+
+The shell script [run_client](client/run_client.sh) creates a new virtual environment based on our [requirements](client/requirements.txt) file and serves our 
+API on port 8000 using uvicorrn. A [Postman Collection](client/postman/hvalfangst-azure-queue-storage.postman_collection.json) has been provided,
+which contains example requests for the CRUD operations that are defined in our [queue router](client/routers/queue.py).
+
 
