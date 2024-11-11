@@ -3,7 +3,7 @@
 echo "Starting Azure resource provisioning script..."
 
 # Load values from config.env
-CONFIG_FILE="$(dirname "$0")/config.env"
+CONFIG_FILE="$(dirname "$0")/infra_config.env"
 if [ -f "$CONFIG_FILE" ]; then
   echo "Loading configuration from $CONFIG_FILE..."
   source "$CONFIG_FILE"
@@ -38,14 +38,6 @@ if [ $? -ne 0 ]; then
 fi
 echo "Storage account $STORAGE_ACCOUNT_NAME created successfully."
 
-# Create the storage container
-echo -e "\nCreating storage container: $STORAGE_CONTAINER_NAME in storage account $STORAGE_ACCOUNT_NAME..."
-az storage container create --name "$STORAGE_CONTAINER_NAME" --account-name "$STORAGE_ACCOUNT_NAME"
-if [ $? -ne 0 ]; then
-  echo "Failed to create storage container: $STORAGE_CONTAINER_NAME."
-  exit 1
-fi
-echo "Storage container $STORAGE_CONTAINER_NAME created successfully."
 
 # Get the storage account key
 echo -e "\nRetrieving account key for storage account $STORAGE_ACCOUNT_NAME..."
@@ -54,7 +46,6 @@ if [ $? -ne 0 ]; then
   echo "Failed to retrieve account key for storage account: $STORAGE_ACCOUNT_NAME."
   exit 1
 fi
-echo "Storage account key retrieved successfully: $ACCOUNT_KEY"  # Note: avoid logging keys in production
 
 # Create the storage queue
 echo -e "\nCreating storage queue: $QUEUE_NAME in storage account $STORAGE_ACCOUNT_NAME..."
@@ -65,4 +56,15 @@ if [ $? -ne 0 ]; then
 fi
 echo "Storage queue $QUEUE_NAME created successfully."
 
-echo -e "\nAll resources created successfully."
+echo -e "\n\n - - - - | ALL RESOURCES WERE SUCCESSFULLY PROVISIONED | - - - - \n\n"
+
+# Get and output the storage account connection string
+echo -e "\nRetrieving connection string for storage account $STORAGE_ACCOUNT_NAME..."
+CONNECTION_STRING=$(az storage account show-connection-string --resource-group "$RESOURCE_GROUP_NAME" --name "$STORAGE_ACCOUNT_NAME" --query "connectionString" -o tsv)
+if [ $? -ne 0 ]; then
+  echo "Failed to retrieve connection string for storage account: $STORAGE_ACCOUNT_NAME."
+  exit 1
+fi
+
+# It goes without saying that you should ONLY do this LOCALLY as the connection string grants you access to **EVERYTHING** in your storage account!
+echo -e "\nStorage account connection string: \n\n$CONNECTION_STRING"

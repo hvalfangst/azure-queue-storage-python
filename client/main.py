@@ -8,4 +8,4 @@ app = FastAPI(
 )
 
 # Register the queue router
-app.include_router(queue.router, prefix="/queue", tags=["Endpoints used to interact with ASQ"])
+app.include_router(queue.router, prefix="/queue", tags=["Endpoints used to interact with our Queue"])

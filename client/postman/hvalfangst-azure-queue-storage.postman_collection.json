@@ -10,15 +10,91 @@
 			"name": "List messages",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/queue/messages",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"queue",
+						"messages"
+					]
+				}
 			},
 			"response": []
 		},
 		{
-			"name": "Get message",
+			"name": "Update message",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Name\": \"Ernst\",\r\n    \"Faction\": \"The snowmen\",\r\n    \"Hates\": \"Sun\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/queue/messages/2125c723-cfa8-4f31-8e0e-c67e32edea77",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"queue",
+						"messages",
+						"2125c723-cfa8-4f31-8e0e-c67e32edea77"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Peek messages",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/queue/messages/peek",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"queue",
+						"messages",
+						"peek"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Pop message",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/queue/messages/pop",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"queue",
+						"messages",
+						"pop"
+					]
+				}
 			},
 			"response": []
 		},
@@ -29,7 +105,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"Name\": \"C. Vector\",\r\n    \"Faction\": \"Brotherhood of Lube\",\r\n    \"Hates\": \"SB abusers\"\r\n}",
+					"raw": "{\r\n    \"Name\": \"Ernst\",\r\n    \"Faction\": \"The snowmen\",\r\n    \"Hates\": \"Sun\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -37,7 +113,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8000/queue/message",
+					"raw": "http://localhost:8000/queue/messages",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -45,19 +121,19 @@
 					"port": "8000",
 					"path": [
 						"queue",
-						"message"
+						"messages"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Delete Message",
+			"name": "Delete Messages",
 			"request": {
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/queue/message/1",
+					"raw": "http://localhost:8000/queue/messages",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -65,8 +141,7 @@
 					"port": "8000",
 					"path": [
 						"queue",
-						"message",
-						"1"
+						"messages"
 					]
 				}
 			},
