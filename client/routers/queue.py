@@ -1,4 +1,3 @@
-import json
 from typing import List, Optional
 
 from azure.core.exceptions import AzureError
@@ -39,7 +38,7 @@ async def create_message_endpoint(person: Person):
         queue_client: QueueClient = QueueClient.from_connection_string(config.CONNECTION_STRING, config.QUEUE_NAME)
 
         # Serialize the message as JSON string
-        message_content = person.json()
+        message_content = person.model_dump_json()
 
         # Send the message to the queue
         raw_results: Message = queue_client.send_message(message_content)
@@ -92,8 +91,8 @@ async def pop_message():
             return {"message": "No messages in the queue"}
 
         try:
-            person = Person.parse_raw(queue_message.content)
-        except json.JSONDecodeError:
+            person = Person.model_validate_json(queue_message.content)
+        except Exception:
             person = Person(
                 first_name="Unknown", last_name="Unknown", age=0, occupation="Unknown", location="Unknown"
             )
@@ -153,8 +152,8 @@ async def read_messages(
         for queue_message in message_iterator:
             try:
                 logger.info(f"Peeked message content: {queue_message.content}")
-                person = Person.parse_raw(queue_message.content)
-            except json.JSONDecodeError:
+                person = Person.model_validate_json(queue_message.content)
+            except Exception:
                 person = Person(
                     first_name="Unknown", last_name="Unknown", age=0, occupation="Unknown", location="Unknown")
 
@@ -200,8 +199,8 @@ async def peek_messages(max_messages: Optional[int] = 10):
         for queue_message in peeked_messages:
             try:
                 logger.info(f"Peeked message content: {queue_message.content}")
-                person = Person.parse_raw(queue_message.content)
-            except json.JSONDecodeError:
+                person = Person.model_validate_json(queue_message.content)
+            except Exception:
                 person = Person(
                     first_name="Unknown", last_name="Unknown", age=0, occupation="Unknown", location="Unknown"
                 )
@@ -242,7 +241,7 @@ async def update_message(message_id: str, request: UpdateMessageRequest):
     """
     try:
         # Log the actual incoming request data
-        logger.info(f"Received request to update message {message_id}: {request.dict()}")
+        logger.info(f"Received request to update message {message_id}: {request.model_dump()}")
 
         queue_client: QueueClient = QueueClient.from_connection_string(config.CONNECTION_STRING, config.QUEUE_NAME)
 
@@ -263,7 +262,7 @@ async def update_message(message_id: str, request: UpdateMessageRequest):
             message_id=updated_message.id,
             pop_receipt=updated_message.pop_receipt,
             next_visible_on=updated_message.next_visible_on.isoformat(),
-            message_content=request.content
+            message_content=request.content.model_dump()
         )
 
     # Handle Azure specific errors
